@@ -63,10 +63,12 @@ export default function LinkedViewD3(props){
                 getX = d => d.position[0];
             }
 
+            // console.log("This is the complete data: \n", data)
             //TODO: filter out points with a concentration of less than 80% of the maximum value of the current filtered datapoints
-            const thresholdConcentration = 0.7 * bounds.maxC;
-            data = data.filter((d) => d.concentration > thresholdConcentration);
-
+            const ConcentrationLimit = 0.7 * d3.max(data, (d) => d.concentration);
+            data = data.filter((d) => d.concentration >= ConcentrationLimit);
+            // console.log("This is the filtered data: \n", data)
+    
             //limit the data to a maximum size to prevent occlusion
             data.sort((a,b) => bDist(a) - bDist(b));
             if(data.length > maxDots){
@@ -92,7 +94,7 @@ export default function LinkedViewD3(props){
             //     .domain(yExtents)
             //     .range(props.colorRange);
 
-            var colour_extent = [thresholdConcentration, bounds.maxC]
+            var colour_extent = [ConcentrationLimit, bounds.maxC]
             let colorScale_custom = d3.scaleLinear()
                 .domain(colour_extent)
                 .range(props.colorRange);
@@ -109,6 +111,17 @@ export default function LinkedViewD3(props){
                 .attr('stroke','black')
                 .attr('stroke-width',.1)
                 .attr('transform',d=>'translate(' + xScale(getX(d)) + ',' + yScale(getY(d)) + ')');
+
+            // Create or update circles for concentration
+            dots.enter().append('circle')
+                .attr('class', 'glyph')
+                .merge(dots)
+                .transition(100)
+                .attr('cx', d => xScale(getX(d))) // Set the x-coordinate of the circle
+                .attr('cy', d => yScale(getY(d))) // Set the y-coordinate of the circle
+                .attr('z-index', 9999)
+                .attr('r', d => (d.concentration) * 0.1) // Set the radius of the circle (adjust as needed)
+                .attr('fill', d => colorScale_custom(d.concentration)); // Fill the circle based on concentration
 
             dots.exit().remove()
         }
