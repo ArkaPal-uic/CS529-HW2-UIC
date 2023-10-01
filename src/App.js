@@ -15,6 +15,13 @@ function App() {
   const [brushedAxis, setBrushedAxis] = useState('x');
   const [textBoxValue, setTextBoxValue] = useState(''); // State variable for text box value
 
+  useEffect(() => {
+    // Check if textBoxValue is empty and set the default value
+    if (textBoxValue === '') {
+      setTextBoxValue('70');
+    }
+  }, [textBoxValue]);
+
   //TODO: Edit this to change the extents of the color scale for the linked view
   //saturated color scale used to color the particles
   const colorRange = ['#c6dbef','#084594'];
@@ -178,13 +185,13 @@ function App() {
       >
         {/* Text box */}
         <div className="textbox">
-          <label htmlFor="textBox">Concentration: </label> {/* Add the label */}
+          <label htmlFor="textBox" style={{marginBottom: '5em'}}>Concentration: </label> {/* Add the label */}
             <textarea
               rows="1"
               cols="5"
               value={textBoxValue} // Bind value to the state variable
               onChange={handleTextBoxChange} // Add onChange event handler
-              defaultValue="0.7"
+              // defaultValue="0.7"
             ></textarea>
         </div>
         <div style={{'width':'100%','maxHeight':'5em','margin':'0px'}}>
