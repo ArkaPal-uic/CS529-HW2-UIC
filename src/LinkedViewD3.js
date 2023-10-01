@@ -18,9 +18,29 @@ function makeVelocityGlyph(d,axis,scale=1){
 
     let xpos = xv/scale
     let ypos = yv/scale
-    let path = 'M ' + xpos + ',' + ypos + ' '
+    // let path = 'M ' + xpos + ',' + ypos + ' '
+    //     + -ypos/3 + ',' + xpos/3 + ' '
+    //     + ypos/3 + ',' + -xpos/3 + 'z'
+
+    // let CirclePath = 'M ' + xpos + ' ' + ypos + ' ' +
+    //     'm -' + (d.concentration/20) + ' 0 ' +
+    //     'a ' + (d.concentration/20) + ' ' + (d.concentration/20) + ' 0 1 1 ' + ((d.concentration/20) * 2) + ' 0 ' +
+    //     'a ' + (d.concentration/20) + ' ' + (d.concentration/20) + ' 0 1 1 -' + ((d.concentration/20) * 2) + ' 0 ' +
+    //     'z'
+
+    // path += CirclePath
+
+
+    let path = 'M ' + xpos + ' ' + ypos + ' ' +
+        'm -' + (d.concentration/20) + ' 0 ' +
+        'a ' + (d.concentration/20) + ' ' + (d.concentration/20) + ' 0 1 1 ' + ((d.concentration/20) * 2) + ' 0 ' +
+        'a ' + (d.concentration/20) + ' ' + (d.concentration/20) + ' 0 1 1 -' + ((d.concentration/20) * 2) + ' 0 ' +
+        'z'
+    
+    path += 'M ' + xpos + ',' + ypos + ' '
         + -ypos/3 + ',' + xpos/3 + ' '
         + ypos/3 + ',' + -xpos/3 + 'z'
+
     return path;
 }
 
@@ -65,7 +85,8 @@ export default function LinkedViewD3(props){
 
             // console.log("This is the complete data: \n", data)
             //TODO: filter out points with a concentration of less than 80% of the maximum value of the current filtered datapoints
-            const ConcentrationLimit = 0.7 * d3.max(data, (d) => d.concentration);
+            // const ConcentrationLimit = 0.7 * d3.max(data, (d) => d.concentration);
+            const ConcentrationLimit = 0.7 * d3.max(props.data, (d) => d.concentration);
             data = data.filter((d) => d.concentration >= ConcentrationLimit);
             // console.log("This is the filtered data: \n", data)
     
@@ -108,20 +129,9 @@ export default function LinkedViewD3(props){
                 .attr('d', d => makeVelocityGlyph(d,props.brushedAxis,.25*vMax/radius))
                 // .attr('fill',d=>colorScale(getY(d)))
                 .attr('fill',d=>colorScale_custom(d.concentration))
-                .attr('stroke','black')
+                // .attr('stroke','black')
                 .attr('stroke-width',.1)
                 .attr('transform',d=>'translate(' + xScale(getX(d)) + ',' + yScale(getY(d)) + ')');
-
-            // Create or update circles for concentration
-            dots.enter().append('circle')
-                .attr('class', 'glyph')
-                .merge(dots)
-                .transition(100)
-                .attr('cx', d => xScale(getX(d))) // Set the x-coordinate of the circle
-                .attr('cy', d => yScale(getY(d))) // Set the y-coordinate of the circle
-                .attr('z-index', 9999)
-                .attr('r', d => (d.concentration) * 0.1) // Set the radius of the circle (adjust as needed)
-                .attr('fill', d => colorScale_custom(d.concentration)); // Fill the circle based on concentration
 
             dots.exit().remove()
         }
