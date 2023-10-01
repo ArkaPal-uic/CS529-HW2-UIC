@@ -13,6 +13,7 @@ function App() {
   //states for brushing and linking
   const [brushedCoord, setbrushedCoord] = useState(0);
   const [brushedAxis, setBrushedAxis] = useState('x');
+  const [textBoxValue, setTextBoxValue] = useState(''); // State variable for text box value
 
   //TODO: Edit this to change the extents of the color scale for the linked view
   //saturated color scale used to color the particles
@@ -126,6 +127,11 @@ function App() {
     >{c}</button>)
   })
 
+  // Event handler for updating the text box value
+  const handleTextBoxChange = (e) => {
+  setTextBoxValue(e.target.value);
+  };
+
   //tabIndex is needed to put the keypress event on the div
   return (
     <div 
@@ -133,6 +139,18 @@ function App() {
       tabIndex={0}
       className="App" style={{'height':'100vh','width':'100vw'}}
     >
+
+    {/* Text box */}
+    <div className="textbox">
+        <textarea
+          rows="4"
+          cols="50"
+          value={textBoxValue} // Bind value to the state variable
+          onChange={handleTextBoxChange} // Add onChange event handler
+          defaultValue="0.7"
+        ></textarea>
+    </div>
+
       <div style={{'maxHeight': '7vh'}}>
         <h1>{"Fluid Simulation"}</h1>
       </div>
@@ -162,6 +180,7 @@ function App() {
           brushedAreaThickness={brushedAreaThickness}
           brushedAxis={brushedAxis}
           getBrushedCoord={getBrushedCoord}
+          textBoxValue={textBoxValue} // Pass the text box value as a prop
         />
       </div>
       <div 
