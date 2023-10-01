@@ -7,13 +7,13 @@ import * as d3 from 'd3';
 //example function/code for making a custom glyph
 //d is the data point {position, velocity,concentration}, axis is ['x','y','z'], scale is optional value to pass to help scale the object size
 function makeVelocityGlyph(d,axis,scale=1){
-    var xv = d.velocity[1];
-    var yv = d.velocity[2];
+    var xv = d.velocity[1]/0.25;
+    var yv = d.velocity[2]/0.25;
     if(axis == 'y'){
-        xv = d.velocity[0];
-        yv =  d.velocity[1];
+        xv = d.velocity[0]/1.25;
+        yv =  d.velocity[1]/1.25;
     } else if(axis == 'z'){
-        xv = d.velocity[0];
+        xv = d.velocity[0]/0.5;
     }
 
     let xpos = xv/scale
@@ -35,8 +35,8 @@ function makeVelocityGlyph(d,axis,scale=1){
         'm -' + (d.concentration/20) + ' 0 ' +
         'a ' + (d.concentration/20) + ' ' + (d.concentration/20) + ' 0 1 1 ' + ((d.concentration/20) * 2) + ' 0 ' +
         'a ' + (d.concentration/20) + ' ' + (d.concentration/20) + ' 0 1 1 -' + ((d.concentration/20) * 2) + ' 0 ' +
-        'z'
-    
+        'z';
+
     path += 'M ' + xpos + ',' + ypos + ' '
         + -ypos/3 + ',' + xpos/3 + ' '
         + ypos/3 + ',' + -xpos/3 + 'z'
@@ -127,11 +127,11 @@ export default function LinkedViewD3(props){
                 .merge(dots)
                 .transition(100)
                 .attr('d', d => makeVelocityGlyph(d,props.brushedAxis,.25*vMax/radius))
-                // .attr('fill',d=>colorScale(getY(d)))
                 .attr('fill',d=>colorScale_custom(d.concentration))
                 // .attr('stroke','black')
                 .attr('stroke-width',.1)
-                .attr('transform',d=>'translate(' + xScale(getX(d)) + ',' + yScale(getY(d)) + ')');
+                .attr('transform',d=>'translate(' + xScale(getX(d)) + ',' + yScale(getY(d)) + ')')
+                .attr('opacity', d => (d.concentration)/357);
 
             dots.exit().remove()
         }
