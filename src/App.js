@@ -140,16 +140,6 @@ function App() {
       className="App" style={{'height':'100vh','width':'100vw'}}
     >
 
-    {/* Text box */}
-    <div className="textbox">
-        <textarea
-          rows="4"
-          cols="50"
-          value={textBoxValue} // Bind value to the state variable
-          onChange={handleTextBoxChange} // Add onChange event handler
-          defaultValue="0.7"
-        ></textarea>
-    </div>
 
       <div style={{'maxHeight': '7vh'}}>
         <h1>{"Fluid Simulation"}</h1>
@@ -186,6 +176,17 @@ function App() {
       <div 
         style={{'height':'50vw','width':'20em','maxHeight':'80vh','display':'inline-block','marginTop':'0px'}}
       >
+        {/* Text box */}
+        <div className="textbox">
+          <label htmlFor="textBox">Concentration: </label> {/* Add the label */}
+            <textarea
+              rows="1"
+              cols="5"
+              value={textBoxValue} // Bind value to the state variable
+              onChange={handleTextBoxChange} // Add onChange event handler
+              defaultValue="0.7"
+            ></textarea>
+        </div>
         <div style={{'width':'100%','maxHeight':'5em','margin':'0px'}}>
           <h4 style={{'margin':'0px','padding':'0px'}}>{"Instructions"}</h4>
           <p style={{'margin':'0px','padding':'0px'}}>{'Use up/down arrows to move brushed area'}</p>
