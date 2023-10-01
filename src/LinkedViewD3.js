@@ -63,6 +63,12 @@ export default function LinkedViewD3(props){
             }
             var data = props.data.filter(isBrushed);
 
+            //-----
+            // output value of textbox
+            console.log(props.textBoxValue)
+
+            //-----
+
             const bounds = props.bounds;
             console.log('bounds',bounds)
             var xExtents = [bounds.minZ, bounds.maxZ];
@@ -83,12 +89,12 @@ export default function LinkedViewD3(props){
                 getX = d => d.position[0];
             }
 
-            // console.log("This is the complete data: \n", data)
+            console.log("This is the complete data: \n", data)
             //TODO: filter out points with a concentration of less than 80% of the maximum value of the current filtered datapoints
             // const ConcentrationLimit = 0.7 * d3.max(data, (d) => d.concentration);
-            const ConcentrationLimit = 0.7 * d3.max(props.data, (d) => d.concentration);
+            const ConcentrationLimit = (parseInt(props.textBoxValue, 10)/100) * d3.max(props.data, (d) => d.concentration);
             data = data.filter((d) => d.concentration >= ConcentrationLimit);
-            // console.log("This is the filtered data: \n", data)
+            console.log("This is the filtered data: \n", data)
     
             //limit the data to a maximum size to prevent occlusion
             data.sort((a,b) => bDist(a) - bDist(b));
