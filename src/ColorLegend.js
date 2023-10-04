@@ -14,15 +14,20 @@ export default function ColorLegend(props){
     //increments we're showing for the legend, as fractions of the maximum value
     // const increments = [0,.1,.2,.3,.4,.5,.6,.7,.8,.9,1];
     // const increments = [0,.1,.2,.3,.4,.5,.6,.7,.8,.9,0.99];
-    const increments = [0.7,0.75, 0.8, 0.85, 0.9, 0.95, 0.99];
+    // const increments = [0.7,0.75, 0.8, 0.85, 0.9, 0.95, 0.99];
+
+    let ScaleConstant = (parseInt(props.textBoxValue, 10)/100)
+
+    const increments = Array.from({ length: 10 }, (_, i) => ScaleConstant + (0.99 - ScaleConstant) * (i / 9));
+
     //you can use a hook like this to set up axes or things that don't require waiting for the data to load so it only draws once
     useEffect(()=>{
         if(svg !== undefined & props.bounds !== undefined){
 
 
             //TODO (optional) change the color scale to match changes to scale in LinkedViewD3.js
-            let colorScale = d3.scaleSymlog()
-                .domain([(0.7 * props.bounds.maxC), props.bounds.maxC])
+            let colorScale = d3.scaleLinear()
+                .domain([(ScaleConstant * props.bounds.maxC), props.bounds.maxC])
                 .range(props.colorRange);
 
             //size of each bar in the legend
@@ -39,7 +44,6 @@ export default function ColorLegend(props){
                 }
                 blockData.push(entry)
                 currY += barHeight;
-
             }
             
             //draw legend colors
@@ -61,7 +65,7 @@ export default function ColorLegend(props){
                 .attr('font-size',Math.max(barHeight/4,10))
                 .text(d=>d.value.toFixed(2));
         }
-    },[svg,props.bounds])
+    },[svg,props.bounds, props.textBoxValue])
 
     
     return (
