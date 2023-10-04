@@ -212,6 +212,7 @@ function App() {
           <ColorLegend
             colorRange={colorRange}
             bounds={bounds}
+            textBoxValue={textBoxValue} 
           />
           </div>
         </div>
