@@ -30,18 +30,18 @@ function makeVelocityGlyph(d,axis,scale=1){
 
     // path += CirclePath
 
-
-    let path = 'M ' + xpos + ' ' + ypos + ' ' +
-        'm -' + (d.concentration/20) + ' 0 ' +
-        'a ' + (d.concentration/20) + ' ' + (d.concentration/20) + ' 0 1 1 ' + ((d.concentration/20) * 2) + ' 0 ' +
-        'a ' + (d.concentration/20) + ' ' + (d.concentration/20) + ' 0 1 1 -' + ((d.concentration/20) * 2) + ' 0 ' +
+    let CircleRadius = d.concentration/20
+    let CirclePath = 'M ' + xpos + ' ' + ypos + ' ' +
+        'm -' + (CircleRadius) + ' 0 ' +
+        'a ' + (CircleRadius) + ' ' + (CircleRadius) + ' 0 1 1 ' + ((CircleRadius) * 2) + ' 0 ' +
+        'a ' + (CircleRadius) + ' ' + (CircleRadius) + ' 0 1 1 -' + ((CircleRadius) * 2) + ' 0 ' +
         'z';
 
-    path += 'M ' + xpos + ',' + ypos + ' '
+    let path = 'M ' + xpos + ',' + ypos + ' '
         + -ypos/3 + ',' + xpos/3 + ' '
         + ypos/3 + ',' + -xpos/3 + 'z'
 
-    return path;
+    return { path: path, CirclePath: CirclePath };
 }
 
 export default function LinkedViewD3(props){
@@ -127,12 +127,12 @@ export default function LinkedViewD3(props){
                 .range(props.colorRange);
 
             //TODO: map the color of the glyph to the particle concentration instead of the particle height
-            let dots = svg.selectAll('.glyph').data(data,d=>d.id)
+            let dots = svg.selectAll('.Arrowglyph').data(data,d=>d.id)
             dots.enter().append('path')
-                .attr('class','glyph')
+                .attr('class','Arrowglyph')
                 .merge(dots)
-                .transition(100)
-                .attr('d', d => makeVelocityGlyph(d,props.brushedAxis,.25*vMax/radius))
+                .transition(25)
+                .attr('d', d => makeVelocityGlyph(d,props.brushedAxis,.25*vMax/radius).path)
                 .attr('fill',d=>colorScale_custom(d.concentration))
                 // .attr('stroke','black')
                 .attr('stroke-width',.1)
@@ -140,6 +140,34 @@ export default function LinkedViewD3(props){
                 .attr('opacity', d => (d.concentration)/357);
 
             dots.exit().remove()
+
+            let Circledots = svg.selectAll('.Circleglyph').data(data,d=>d.id)
+            Circledots.enter().append('path')
+                .attr('class','Circleglyph')
+                .merge(Circledots)
+                .transition(25)
+                .attr('d', d => makeVelocityGlyph(d,props.brushedAxis,.25*vMax/radius).CirclePath)
+                .attr('fill', 'steelblue')
+                .attr('stroke','black')
+                .attr('stroke-width',.2)
+                .attr('transform',d=>'translate(' + xScale(getX(d)) + ',' + yScale(getY(d)) + ')')
+                .attr('opacity', 0.15);
+
+            Circledots.exit().remove()
+
+            // let Circledots = svg.selectAll('.Circleglyph').data(data,d=>d.id)
+            // Circledots.enter().append('CirclePath')
+            //     .attr('class','Circleglyph')
+            //     .merge(Circledots)
+            //     .transition(100)
+            //     .attr('d', d => makeVelocityGlyph(d,props.brushedAxis,.25*vMax/radius).CirclePath)
+            //     .attr('fill',d=>colorScale_custom(d.concentration))
+            //     .attr('stroke','black')
+            //     .attr('stroke-width',.1)
+            //     .attr('transform',d=>'translate(' + xScale(getX(d)) + ',' + yScale(getY(d)) + ')')
+            //     // .attr('opacity', d => (d.concentration)/357);
+
+            // Circledots.exit().remove()
         }
     },[svg,props.data,props.getBrushedCoord,props.bounds])
 
